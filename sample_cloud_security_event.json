@@ -1,0 +1,114 @@
+{
+  "alert_id": "CLOUD-ALRT-2025-12-28-00987",
+  "alert_name": "AWS IAM Credential Misuse: AssumeRole from Tor + Rapid Recon",
+  "source": "AWS GuardDuty + CloudTrail",
+  "severity": "High",
+  "timestamp": "2025-12-28T19:26:11Z",
+
+  "cloud_context": {
+    "provider": "AWS",
+    "account_id": "123456789012",
+    "account_name": "prod-cloud-sec",
+    "region": "us-east-1",
+    "services_involved": ["sts", "iam", "ec2", "s3"]
+  },
+
+  "affected_identity": {
+    "identity_type": "IAM User",
+    "user_name": "finance-ci-user",
+    "principal_arn": "arn:aws:iam::123456789012:user/finance-ci-user",
+    "access_key_id": "AKIAEXAMPLE7H2F3K9L",
+    "mfa_authenticated": false
+  },
+
+  "session_context": {
+    "assumed_role": {
+      "role_name": "FinanceAppAdminRole",
+      "role_arn": "arn:aws:iam::123456789012:role/FinanceAppAdminRole",
+      "session_name": "FinanceAppAdminSession-7f3c",
+      "event_name": "AssumeRole"
+    },
+    "session_start": "2025-12-28T19:22:34Z",
+    "session_last_seen": "2025-12-28T19:26:11Z"
+  },
+
+  "network_context": {
+    "source_ip": "185.220.101.44",
+    "source_country": "Germany",
+    "source_city": "Frankfurt",
+    "source_asn": "AS9009",
+    "anonymity_service": "Tor Exit Node",
+    "user_agent": "aws-cli/2.15.4 Python/3.11 botocore/2.4.0"
+  },
+
+  "event_summary": "Valid AWS credentials were used from a Tor exit node to assume an administrative IAM role. The session immediately performed rapid cloud discovery and attempted to establish persistence.",
+
+  "guardduty_findings": [
+    {
+      "finding_type": "UnauthorizedAccess:IAMUser/TorIPCaller",
+      "confidence": "High",
+      "description": "AWS API calls were made from a Tor exit node using valid IAM credentials."
+    }
+  ],
+
+  "cloudtrail_events": [
+    {
+      "event_time": "2025-12-28T19:22:34Z",
+      "event_name": "AssumeRole",
+      "event_source": "sts.amazonaws.com",
+      "source_ip_address": "185.220.101.44"
+    },
+    {
+      "event_time": "2025-12-28T19:23:21Z",
+      "event_name": "ListUsers",
+      "event_source": "iam.amazonaws.com",
+      "source_ip_address": "185.220.101.44"
+    },
+    {
+      "event_time": "2025-12-28T19:23:47Z",
+      "event_name": "DescribeInstances",
+      "event_source": "ec2.amazonaws.com",
+      "source_ip_address": "185.220.101.44"
+    },
+    {
+      "event_time": "2025-12-28T19:24:33Z",
+      "event_name": "ListBuckets",
+      "event_source": "s3.amazonaws.com",
+      "source_ip_address": "185.220.101.44"
+    },
+    {
+      "event_time": "2025-12-28T19:25:21Z",
+      "event_name": "CreateAccessKey",
+      "event_source": "iam.amazonaws.com",
+      "source_ip_address": "185.220.101.44",
+      "request_parameters": {
+        "userName": "backup-ops-user"
+      }
+    },
+    {
+      "event_time": "2025-12-28T19:25:44Z",
+      "event_name": "AttachUserPolicy",
+      "event_source": "iam.amazonaws.com",
+      "source_ip_address": "185.220.101.44",
+      "request_parameters": {
+        "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+      }
+    }
+  ],
+
+  "indicators": {
+    "ips": ["185.220.101.44"],
+    "principal_arns": [
+      "arn:aws:iam::123456789012:user/finance-ci-user",
+      "arn:aws:iam::123456789012:role/FinanceAppAdminRole"
+    ],
+    "s3_buckets": ["prod-finance-exports"]
+  },
+
+  "observations": [
+    "IAM role assumed from Tor exit node",
+    "No MFA present on originating IAM user",
+    "Rapid IAM, EC2, and S3 discovery activity",
+    "Access key creation and admin policy attachment observed"
+  ]
+}
