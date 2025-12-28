@@ -2,14 +2,20 @@
 
 ## Project Overview
 
-This project implements a cloud-native security triage application that models real-world SOC (Security Operations Center) and SOAR (Security Orchestration, Automation, and Response) workflows. It is designed to ingest raw cloud security telemetry—specifically AWS GuardDuty and CloudTrail logs—and orchestrate a team of specialized AI agents to automate the analysis, classification, and response recommendation process.
+This project implements a cloud-native security triage application that models real-world SOC (Security Operations Center) and SOAR (Security Orchestration, Automation, and Response) workflows. It is designed to ingest manually entered JSON threat alerts—formatted as AWS GuardDuty and CloudTrail logs—and orchestrate a team of specialized AI agents to automate the analysis, classification, and response recommendation process.
 
 The system transforms low-level JSON alerts into explainable, analyst-ready incident reports, bridging the critical gap between raw telemetry and actionable incident response.
 
 ## Try the Workflow
 
 If you want to try the workflow I created, use this link:
-[Launch Cloud-Native AI Security Triage Agent](https://opal.google/?flow=drive:/1Lv4hLhh5ni14v7Kf9osOJPMzybdcZm_o&shared&mode=appEnough)
+[Launch Cloud-Native AI Security Triage Agent](https://opal.google/?flow=drive:/1Lv4hLhh5ni14v7Kf9osOJPMzybdcZm_o&shared&mode=app)
+
+---
+
+## Technical Architecture
+
+The application orchestrates a pipeline of specialized agents powered by Gemini 2.5 Flash (for high-speed normalization and mapping) and Gemini 2.5 Pro (for complex reasoning and credibility analysis).
 
 <p align="center">
   <img src=".assets/Screenshot 2025-12-28 134726.png" alt="AI Agent Workflow Architecture" width="800"/>
@@ -17,13 +23,9 @@ If you want to try the workflow I created, use this link:
   <em>Figure 1: Multi-Agent Orchestration Workflow for Automated Triage</em>
 </p>
 
-## Technical Architecture
-
-The application orchestrates a pipeline of specialized agents powered by Gemini 2.5 Flash (for high-speed normalization and mapping) and Gemini 2.5 Pro (for complex reasoning and credibility analysis).
-
 ### Agent Pipeline
 1.  **Normalize & Summarize Agent (Gemini 2.5 Flash):**
-    * Ingests raw, nested JSON from AWS GuardDuty and CloudTrail.
+    * Ingests raw, nested JSON alerts provided by the user.
     * Parses and normalizes critical fields (Source IP, IAM Role, ARN, Event Time).
     * Generates a concise, human-readable summary of the security event.
 
@@ -59,7 +61,7 @@ The dashboard provides an immediate "at-a-glance" assessment, highlighting the A
 </p>
 
 ### 2. Transparent Decision Flow & Telemetry
-Unlike "black box" AI tools, this system provides a Transparent Decision Flow. It outlines exactly why the AI flagged the event, mapping the logic from the initial Normalization step through to the MITRE mapping. It also visualizes the raw CloudTrail event timeline to allow human analysts to verify the AI's findings.
+Unlike "black box" AI tools, this system provides a Transparent Decision Flow. It outlines exactly why the AI flagged the event, mapping the logic from the initial Normalization step through to the MITRE mapping. It also visualizes the raw event timeline to allow human analysts to verify the AI's findings.
 
 <p align="center">
   <img src=".assets/Screenshot 2025-12-28 142512.png" alt="Detailed Event Timeline and Recommendations" width="800"/>
@@ -71,11 +73,10 @@ Unlike "black box" AI tools, this system provides a Transparent Decision Flow. I
 
 ## Technology Stack
 
-* **AI Models:** Google Gemini 2.5 Flash (Latency-sensitive tasks), Gemini 2.5 Pro (Complex Reasoning).
-* **Orchestration:** Python-based Agent Chaining.
-* **Data Sources:** AWS GuardDuty Findings, AWS CloudTrail Logs (JSON).
-* **Frameworks:** React/Next.js (Frontend Dashboard), Python/FastAPI (Backend Logic).
-* **Security Standards:** MITRE ATT&CK Framework (Cloud Matrix).
+* **Platform:** Google Opal (Workflow Orchestration & App Builder)
+* **AI Models:** Google Gemini 2.5 Flash (Latency-sensitive tasks), Gemini 2.5 Pro (Complex Reasoning)
+* **Data Sources:** Manual JSON Input (GuardDuty & CloudTrail Schemas)
+* **Security Standards:** MITRE ATT&CK Framework (Cloud Matrix)
 
 ---
 
